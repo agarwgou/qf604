@@ -52,6 +52,10 @@ def get_factors(data, target, K, fun = None, diff = None):
         target (string) : The name of the target factor.
         K (int) : The number of lags.
         fun (obj, optional) : The function to use to derive the factor values. Defaults to None
+        diff (string: optional): The method of differencing, if required. Available modes: 
+                                >>> "log": log-differencing
+                                >>> "first_order": first order differencing
+                                Defaults to None.
 
     returns:
         ndarray : The derived matrix of factor values.
@@ -202,6 +206,7 @@ def GARCH_MIDAS(params,
         X (ndarray or tuple) : A set of matrices of the factor values. If there are more than one factor, a tuple is used.
         K (int) : The number of lags.
         get_tau (obj, optional) : The function required to get the required tau array. Defaults to one factor model, get_onefactor_tau
+        midas_type (string, optional): The method for MiDaS regression. Supported types included "fixed" and "log". Defaults to "fixed".
         full_output (bool, optional) : If True, it returns a set of outputs -loglik, logliks, e, tau, gt, ht, T. Otherwise, returns loglik. Defaults to False.
 
     Returns:
@@ -219,7 +224,7 @@ def GARCH_MIDAS(params,
     elif midas_type == 'log':
         tau = np.exp(tau)
     else:
-        raise ValueError("Invalid MIDAS type: {}".format(midas_type))
+        raise ValueError("Invalid or Unsupported MIDAS type: {}".format(midas_type))
 
     ## define the squared errors
     e = returns[-tau.shape[0]:] - mu

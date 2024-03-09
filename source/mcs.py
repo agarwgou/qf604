@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from model_confidence_set import ModelConfidenceSet
 from .garchmidas import *
 
