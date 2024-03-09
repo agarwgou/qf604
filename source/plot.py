@@ -52,3 +52,12 @@ def plot_results(x, ht, tau, title = None):
         plt.title(title)
     plt.legend()
     plt.show()
+
+def plot_forecast(x, realized_vol, forecast_vol, title = None):
+    plt.plot(x, realized_vol, 'g--', label = 'intraday vol')
+    plt.plot(x, forecast_vol,'b-', label = 'forecasted vol')
+    if title:
+        plt.title(title)
+        
+    plt.legend()
+    plt.show()

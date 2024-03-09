@@ -292,15 +292,15 @@ def get_LMSE(N, vol, ht):
     e = vol/np.sqrt(252) - np.sqrt(ht)/100
     e2 = e**2
 
-    return 1/(N) * np.sum(e2)
+    return np.mean(e2)
 
 def get_LMAE(N, vol, ht):
     e = vol/np.sqrt(252) - np.sqrt(ht)/100
     abs_e = np.abs(e)
 
-    return 1/N * np.sum(abs_e)
+    return np.mean(abs_e)
 
-def out_sample_test(test_returns, vol, X_test, K, res, lookahead):
+def out_sample_test(test_returns, vol, X_test, K, res, nbr_test_days, lookahead):
     if isinstance(X_test, list) or isinstance(X_test, tuple):
         M = len(X_test)-1
     else:
@@ -311,12 +311,13 @@ def out_sample_test(test_returns, vol, X_test, K, res, lookahead):
             get_threefactor_tau, 
             get_fourfactor_tau]
 
-    loglik, logliks, e, tau, gt, ht, T =  GARCH_MIDAS(res['x'], 
+    _, _, _, _, _, _ht, _ =  GARCH_MIDAS(res['x'], 
                                                   test_returns, 
                                                   X_test, 
                                                   K, 
                                                   get_tau=func[M], 
                                                   full_output=True)
+    ht = _ht[-1*int(nbr_test_days): ]
     LMSE = []
     LMAE = []
 

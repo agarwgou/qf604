@@ -15,12 +15,12 @@ def get_AE(N, vol, ht):
 
     return abs_e
 
-def mcs_test(test_returns, vol, X_test_K_res_tuple, lookahead):
+def mcs_test(vol, ret_Xtest_K_res_nbr_tuple, lookahead):
 
     SE = []
     AE = []
     
-    for (X_test,K,res) in X_test_K_res_tuple:
+    for (ret, X_test,K,res, nbr) in ret_Xtest_K_res_nbr_tuple:
     
         if isinstance(X_test, list) or isinstance(X_test, tuple):
             M = len(X_test)-1
@@ -32,13 +32,13 @@ def mcs_test(test_returns, vol, X_test_K_res_tuple, lookahead):
                 get_threefactor_tau, 
                 get_fourfactor_tau]
 
-        loglik, logliks, e, tau, gt, ht, T =  GARCH_MIDAS(res['x'], 
-                                                          test_returns, 
-                                                          X_test, 
-                                                          K, 
-                                                          get_tau=func[M], 
-                                                          full_output=True)
-
+        _, _, _, _, _, _ht, _ =  GARCH_MIDAS(res['x'], 
+                                            ret, 
+                                            X_test, 
+                                            K, 
+                                            get_tau=func[M], 
+                                            full_output=True)
+        ht = _ht[-1*int(nbr):]
         SE.append(get_SE(lookahead, vol[:lookahead], ht[:lookahead]))
         AE.append(get_AE(lookahead, vol[:lookahead], ht[:lookahead]))
 

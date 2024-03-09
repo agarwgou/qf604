@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 from .garchmidas import *
 
-def is_os_split(data, date, K, diff = None, study = 'replicate'):
+def is_os_split(data, date_split, K, diff = None, study = 'replicate'):
     if study not in ['replicate', 'extension']:
         raise ValueError('Study has to be either "replicate" or "extension"!')
     
-    date = pd.to_datetime(date)
-    train_data = data[data.index < date].copy()
-    test_split =  date + pd.offsets.MonthEnd(0) - pd.offsets.MonthBegin(K+1)
-    test_data = data[data.index >= test_split].copy()
+    date_split = pd.to_datetime(date_split)
+    train_data = data[data.index < date_split].copy()
+    # test_split =  date + pd.offsets.MonthEnd(0) - pd.offsets.MonthBegin(K+1)
+    test_data = data.copy()
 
     X1_train = get_factors(train_data, 
                            'daily_return', 
@@ -45,6 +45,8 @@ def is_os_split(data, date, K, diff = None, study = 'replicate'):
         X_train += (X4_train, X5_train)
         X_test += (X4_test, X5_test)
 
-    return X_train, X_test, train_returns, test_returns
+    nbr_test_days = data[(data.index >= date_split)].shape[0]
+
+    return X_train, X_test, train_returns, test_returns, nbr_test_days
 
     
