@@ -193,6 +193,36 @@ def get_threefactor_tau(params, X, K):
 
     return mu, alpha, beta, tau, T
 
+def get_fourfactor_tau(params, X, K):
+    '''
+    Function to return an array of taus based on three-factor GARCH-MIDAS model.
+    Args:
+        params (ndarray) : An array of the 10 parameters required for the model
+        X (ndarray) : A matrix of the factor values.
+        K (int) : The number of lags.
+
+    Returns:
+        mu (float) : The parameter mu.
+        alpha (float) : The parameter alpha.
+        beta (float) : The parameter beta.
+        tau (ndarray) : An array of Tau values.
+        T (int) : The size of the Tau array.
+    '''
+    mu, alpha, beta, theta1, theta2,theta3,theta4, omega1, omega2, omega3, omega4, m = params
+    X1, X2, X3, X4 = X
+
+    tau =\
+    (
+        m 
+        + theta1 * np.dot(X1, beta_lag_wt_scheme(K, omega1))
+        + theta2 * np.dot(X2, beta_lag_wt_scheme(K, omega2))
+        + theta3 * np.dot(X3, beta_lag_wt_scheme(K, omega3))
+        + theta4 * np.dot(X4, beta_lag_wt_scheme(K, omega4))
+    )
+    T = tau.size
+
+    return mu, alpha, beta, tau, T
+
 
 def GARCH_MIDAS(params, 
                 returns, X, K, 
@@ -276,7 +306,10 @@ def out_sample_test(test_returns, vol, X_test, K, res, lookahead):
     else:
         M = 0
     
-    func = [get_onefactor_tau, get_twofactor_tau, get_threefactor_tau]
+    func = [get_onefactor_tau, 
+            get_twofactor_tau, 
+            get_threefactor_tau, 
+            get_fourfactor_tau]
 
     loglik, logliks, e, tau, gt, ht, T =  GARCH_MIDAS(res['x'], 
                                                   test_returns, 

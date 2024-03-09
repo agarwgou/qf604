@@ -27,7 +27,10 @@ def mcs_test(test_returns, vol, X_test_K_res_tuple, lookahead):
         else:
             M = 0
     
-        func = [get_onefactor_tau, get_twofactor_tau, get_threefactor_tau]
+        func = [get_onefactor_tau, 
+                get_twofactor_tau, 
+                get_threefactor_tau, 
+                get_fourfactor_tau]
 
         loglik, logliks, e, tau, gt, ht, T =  GARCH_MIDAS(res['x'], 
                                                           test_returns, 

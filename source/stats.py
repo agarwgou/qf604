@@ -4,7 +4,7 @@ from scipy.linalg import inv
 from scipy import stats
 from statsmodels.tsa.stattools import adfuller, kpss
 
-def get_descriptive_stats(df):
+def get_descriptive_stats(df, study = 'replicate'):
     '''
     Helper function to run required descriptive statistics of the data.
     Descriptive statistics include
@@ -24,6 +24,9 @@ def get_descriptive_stats(df):
         DataFrame: A dataframe of descriptive statistics.
 
     '''
+    if study not in ['replicate', 'extension']:
+        raise ValueError('Study has to be either "replicate" or "extension"!')
+    
     cpu = np.array(df['cpu_index'].resample('M').mean())
     emdat = np.array(df['Monthly_Disaster_Freq'].resample('M').mean())
     ng = np.array(df['daily_return'])
@@ -37,6 +40,18 @@ def get_descriptive_stats(df):
              'd. ln(CPU Index)',
              'Natural disasters frequency',
              'd. ln(Natural disasters frequency)']
+    
+    if study == 'extension':
+        avg_temp_north = np.array(df['North'].resample('M').mean())
+        avg_temp_south = np.array(df['South'].resample('M').mean())
+        storage = np.array(df['Storage'].resample('M').mean())
+
+        diff_storage = storage[1:] - storage[:-1]
+
+        data_lst += [avg_temp_north, avg_temp_south, storage, diff_storage]
+        title_lst += ['Average North Temp', 'Average South Temp', 
+                      'Storage', 'd. Storage']
+
 
     descriptive_stats = []
     for data, title in zip(data_lst, title_lst):
@@ -62,7 +77,7 @@ def get_descriptive_stats(df):
     
     return df_stats
 
-def run_kpss_test(df):
+def run_kpss_test(df, study = 'replicate'):
     '''
     Helper function to run required KPSS test of the data.
     The KPSS tests are ran on:
@@ -75,6 +90,9 @@ def run_kpss_test(df):
         DataFrame: A dataframe of descriptive statistics.
 
     '''
+    if study not in ['replicate', 'extension']:
+        raise ValueError('Study has to be either "replicate" or "extension"!')
+
     cpu = np.array(df['cpu_index'].resample('M').mean())
     emdat = np.array(df['Monthly_Disaster_Freq'].resample('M').mean())
     ng = np.array(df['daily_return'])
@@ -93,6 +111,17 @@ def run_kpss_test(df):
              'Natural disasters frequency',
              'd. Natural disasters frequency',
              'd. ln(Natural disasters frequency)']
+    
+    if study == 'extension':
+        avg_temp_north = np.array(df['North'].resample('M').mean())
+        avg_temp_south = np.array(df['South'].resample('M').mean())
+        storage = np.array(df['Storage'].resample('M').mean())
+
+        diff_storage = storage[1:] - storage[:-1]
+
+        data_lst += [avg_temp_north, avg_temp_south, storage, diff_storage]
+        title_lst += ['Average North Temp', 'Average South Temp', 
+                      'Storage', 'd. Storage']
 
     kpss_stats = []
 
