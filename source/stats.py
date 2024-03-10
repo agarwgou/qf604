@@ -66,7 +66,8 @@ def get_descriptive_stats(df, study = 'replicate'):
                     'max': np.max(data),
                     'skewness': stats.skew(data),
                     'kurtosis' : stats.kurtosis(data),
-                    'ADF' : adfuller(data)[0]
+                    'ADF' : adfuller(data)[0],
+                    'p-val' : adfuller(data)[1]
                 }
             )
         
@@ -207,7 +208,8 @@ def summary_stats(fun, T, params, args, labels, epsilon=1e-05):
     (
         pd
         .DataFrame(
-            data = {'values': params, 
+            data = {'values': params,
+                    'SE' : se, 
                     'p-val': pvalues}, 
             index = labels
             ).T
